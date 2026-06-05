@@ -501,6 +501,12 @@ void CPUInfo::DetermineCoreTypes()
 
     FREE( buffer );
 
+    #elif defined( __aarch64__ ) || defined( _M_ARM64 )
+
+    // Linux ARM64:
+    // Treat all cores as performance cores.
+    m_NumPCores = m_NumCores;
+
     #else
     // Detect Performance and Efficiency core breakdown
 

@@ -1,3 +1,26 @@
+I modified the CPUInfo.cpp under Code/Core/Env/ to treat all cores as performance cores on aarch64 so i could get it to compile.
+Since there is no binary already i had to compile and link it like this
+
+```
+clang -c External/xxHash/0.8.2/xxhash.c \
+                                                                -DXXH_NAMESPACE=xxHashLib_ \
+                                                                -o xxhash_ns.o
+
+clang -c External/xxHash/0.8.2/xxhash.c \
+                                                                -o xxhash_plain.o
+
+clang++ -O2 -std=c++17 -DRELEASE -D__LINUX__ \
+                                                              -I./Code \
+                                                              xxhash_ns.o \
+                                                              xxhash_plain.o \
+                                                              Code/Tools/FBuild/FBuild/Main.cpp \
+                                                              $(find Code/Tools/FBuild/FBuildCore -name '*.cpp' ! -path '*Test*') \
+                                                              Code/Tools/FBuild/FBuildCore/BFF/Functions/FunctionTest.cpp \
+                                                              Code/Tools/FBuild/FBuildCore/Graph/TestNode.cpp \
+                                                              $(find Code/Core -name '*.cpp' ! -path '*Test*' ! -name 'libc_start_main.cpp') \
+                                                              -lzstd -llz4 -pthread -ldl \
+                                                              -o fbuild
+```
 # FASTBuild
 
 FASTBuild is a build system for Windows, OSX and Linux, supporting distributed compilation and object caching. It is used by many game developers, from small independent teams to some of the largest studios in the world.
